@@ -55,7 +55,7 @@ WHERE M.Dir_id = D.Dir_id AND D.Dir_name = "Steven";
 --2
 SELECT A.Act_name  , M.Mov_id
 FROM ACTOR A , MOVIE_CAST M
-WHERE M.Act_id = M.Act_id AND  A.Act_id IN (
+WHERE M.Act_id = A.Act_id AND  A.Act_id IN (
     SELECT M2.Act_id  FROM MOVIE_CAST M2
     GROUP BY Act_id
     HAVING COUNT(Act_id) > 1
@@ -73,3 +73,35 @@ SELECT A2.Act_name
 FROM ACTOR A2 JOIN MOVIE_CAST M2 ON A2.Act_id = M2.Act_id JOIN MOVIES M3 on M3.Mov_id = M2.Mov_id
 WHERE M3.Mov_year >2015
 );
+
+
+--4
+
+SELECT M.Mov_title , MAX (R.Rev_stars)
+FROM MOVIES M , RATING R,
+WHERE M.Mov_id = R.Mov_id
+AND M.Mov_id IN(
+    SELECT Mov_id 
+    FROM RATING
+    WHERE Rev_stars > 0
+    GROUP BY Mov_id
+    HAVING Count(Rev_stars) > 0
+)
+GROUP BY M.Mov_title
+ORDER BY M.Mov_title;
+
+--5
+UPDATE RATING
+SET Rev_stars = 5
+WHERE Mov_id IN (
+    SELECT Mov_id
+    FROM Movies
+    WHERE Dir_id IN (
+        SELECT Dir_id 
+        FROM DIRECTOR
+        WHERE Dir_name  = 'Hitchcock'
+    )
+);
+
+
+

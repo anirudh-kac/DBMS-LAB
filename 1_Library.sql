@@ -71,10 +71,14 @@ INSERT INTO BOOK_LENDING VALUES (&Book_id,&Programme_id,&Card_no,'&Date_out','&D
 
 
 --1
-SELECT B.Book_id , B.Title , B.Publisher_name , B.Pub_year , A.Author_name , C.No_of_copies
-FROM BOOK B , BOOK_AUTHORS A , BOOK_COPIES C
-WHERE B.Book_id = A.Book_id AND B.Book_id = C.Book_id
-
+SELECT B.Book_id , B.Title , B.Publisher_name , B.Pub_year , A.Author_name , C.No_of_copies , L.Programme_id
+FROM BOOK B , BOOK_AUTHORS A , BOOK_COPIES C , LIBRARY_PROGRAMME L
+WHERE B.Book_id = A.Book_id AND B.Book_id = C.Book_id AND L.Programme_id = C.Programme_id
+AND (C.Programme_id ,C.Book_id) IN (
+    SELECT Programme_id , Book_id 
+    FROM BOOK_COPIES 
+    GROUP BY Programme_id , Book_id
+)
 --2
 SELECT * FROM BOOK_LENDING
 WHERE Due_date BETWEEN '01-JAN-17' AND '28-FEB-21' AND 
@@ -100,7 +104,7 @@ SELECT * FROM YEAR;
 
 --5
 CREATE VIEW ALL_BOOKS AS
-SELECT B.Title , L.Programme_name , C.No_of_copies
+SELECT B.Title , L.Programme_name , C.No_of_copies , L.Programme_name
 FROM BOOK B , LIBRARY_PROGRAMME L , BOOK_COPIES C
 WHERE B.Book_id = C.Book_id AND L.Programme_id = C.Programme_id;
 

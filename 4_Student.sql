@@ -61,29 +61,30 @@ INSERT INTO IAMARKS VALUES ('&USN','&Subcode','&SSID',&Test1,&Test2,&Test3,&Fina
 --1 (set sem and section as mentioned)
 SELECT S.USN , S.SName , S.Address
 FROM STUDENT S, SEMSEC SS , CLASS C
-WHERE S.USN = C.USN AND SS.SSID = C.SSID AND SS.SEM = 5;
+WHERE S.USN = C.USN AND SS.SSID = C.SSID AND SS.SEM = 4 AND SS.Sec = 'C';
 
 --2 
 
-SELECT COUNT(S.Gender) 
+SELECT SS.Sem , SS.Sec , S.Gender , COUNT(S.Gender) 
 FROM STUDENT S , CLASS C , SEMSEC SS
 WHERE S.USN = C.USN AND C.SSID = SS.SSID
-GROUP BY SS.Sem ,SS.Sec;
+GROUP BY SS.Sem ,SS.Sec , S.gender
+ORDER BY SS.Sem , SS.Sec;
 
 --3  (set usn acc to query)
 
 CREATE VIEW S1IA AS
 SELECT S.USN , IA.Test1 
 FROM STUDENT S , IAMARKS IA
-WHERE S.USN = IA.USN  AND S.USN = '1mv18cs001';
+WHERE S.USN = IA.USN  AND S.USN = '1mv16cs001';
 
 SELECT * FROM S1IA;
 
 --4
 UPDATE IAMARKS 
 SET FinalIA = ((Test1+Test2+Test3) - (CASE
-            WHEN Test1<Test2 and Test2<Test3 THEN Test1
-            WHEN Test1<Test2 and Test3<Test2 THEN Test2
+            WHEN Test1<Test2 and Test1<Test3 THEN Test1
+            WHEN Test2<Test1 and Test2<Test3 THEN Test2
             ELSE Test3
             END
             ))/2;
@@ -97,4 +98,4 @@ SELECT S.USN , S.Sname , IA.FinalIA , (CASE
     END
 ) as CAT 
 FROM STUDENT S , IAMARKS IA, CLASS C , SEMSEC SS 
-WHERE S.USN = IA.USN AND SS.SSID = IA.SSID AND SS.Sem = 5;
+WHERE S.USN = IA.USN AND SS.SSID = IA.SSID AND SS.Sem = 8;

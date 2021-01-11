@@ -1,3 +1,4 @@
+
 --creating tables
 CREATE TABLE SALESMAN
 (
@@ -67,7 +68,7 @@ UNION
 CREATE VIEW MAX_ORD AS
 	SELECT S.Salesman_id, S.name, C.Customer_id, C.Customer_name, O.Ord_date, O.Purchase_amt
 	FROM Salesman S, Customer C, Orders O
-	WHERE S.Salesman_id = C.Salesman_id and C.customer_id = C.customer_id;
+	WHERE S.Salesman_id = C.Salesman_id and C.customer_id = S.customer_id;
 
 SELECT * FROM MAX_ORD M
 WHERE M.Purchase_amt = (SELECT MAX(M1.Purchase_amt) FROM MAX_ORD M1 WHERE M.Ord_date = M1.Ord_date);
