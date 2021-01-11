@@ -1,5 +1,12 @@
 --creating tables
 
+-- Consider the schema for College Database:
+-- STUDENT(USN, SName, Address, Phone, Gender)
+-- SEMSEC(SSID, Sem, Sec)
+-- CLASS(USN, SSID)
+-- COURSE(Subcode, Title, Sem, Credits)
+-- IAMARKS(USN, Subcode, SSID, Test1, Test2, Test3, FinalIA)
+
 CREATE TABLE STUDENT(
     USN VARCHAR(10),
     SName VARCHAR(10),
@@ -59,11 +66,17 @@ INSERT INTO IAMARKS VALUES ('&USN','&Subcode','&SSID',&Test1,&Test2,&Test3,&Fina
 --queries
 
 --1 (set sem and section as mentioned)
+
+-- List all the student details studying in fourth semester ‘C’ section
+
 SELECT S.USN , S.SName , S.Address
 FROM STUDENT S, SEMSEC SS , CLASS C
 WHERE S.USN = C.USN AND SS.SSID = C.SSID AND SS.SEM = 4 AND SS.Sec = 'C';
 
 --2 
+
+-- Compute the total number of male and female students in each semester and in
+-- each section.
 
 SELECT SS.Sem , SS.Sec , S.Gender , COUNT(S.Gender) 
 FROM STUDENT S , CLASS C , SEMSEC SS
@@ -73,6 +86,8 @@ ORDER BY SS.Sem , SS.Sec;
 
 --3  (set usn acc to query)
 
+-- Create a view of Test1 marks of student USN ‘1BI15CS101’ in all Courses.
+
 CREATE VIEW S1IA AS
 SELECT S.USN , IA.Test1 
 FROM STUDENT S , IAMARKS IA
@@ -81,6 +96,10 @@ WHERE S.USN = IA.USN  AND S.USN = '1mv16cs001';
 SELECT * FROM S1IA;
 
 --4
+
+-- Calculate the FinalIA (average of best two test marks) and update the
+-- corresponding table for all students
+
 UPDATE IAMARKS 
 SET FinalIA = ((Test1+Test2+Test3) - (CASE
             WHEN Test1<Test2 and Test1<Test3 THEN Test1
@@ -91,6 +110,13 @@ SET FinalIA = ((Test1+Test2+Test3) - (CASE
 
 
 --5 (set sem values accordingly)
+
+-- Categorize students based on the following criterion:
+-- If FinalIA = 17 to 20 then CAT = ‘Outstanding’
+-- If FinalIA = 12 to 16 then CAT = ‘Average’
+-- If FinalIA< 12 then CAT = ‘Weak’
+-- Give these details only for 8th semester A, B, and C section students
+
 SELECT S.USN , S.Sname , IA.FinalIA , (CASE
     WHEN IA.FinalIA BETWEEN 17 AND 20 THEN 'Outstanding'
     WHEN IA.FinalIA BETWEEN 12 AND 16 THEN 'Average'
@@ -98,4 +124,4 @@ SELECT S.USN , S.Sname , IA.FinalIA , (CASE
     END
 ) as CAT 
 FROM STUDENT S , IAMARKS IA, CLASS C , SEMSEC SS 
-WHERE S.USN = IA.USN AND SS.SSID = IA.SSID AND SS.Sem = 8;
+WHERE S.USN = IA.USN AND SS.SSID = IA.SSID AND SS.Sem = 8 AND (SS.Sec = 'A' OR SS.Sec = 'B' OR SS.Sec = 'C');

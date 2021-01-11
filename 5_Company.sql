@@ -1,5 +1,12 @@
 --creating tables
 
+-- Consider the schema for Company Database:
+-- EMPLOYEE(SSN, Name, Address, Sex, Salary, SuperSSN, DNo)
+-- DEPARTMENT(DNo, DName, MgrSSN, MgrStartDate)
+-- DLOCATION(DNo,DLoc)
+-- PROJECT(PNo, PName, PLocation, DNo)
+-- WORKS_ON(SSN, PNo, Hours)
+
 CREATE TABLE EMPLOYEE(
     SSN NUMBER(10),
     Name VARCHAR(10),
@@ -62,6 +69,11 @@ INSERT INTO WORKS_ON VALUES (&SSN,&PNo,&Hours);
 --QUERIES
 
 --1
+
+-- Make a list of all project numbers for projects that involve an employee whose
+-- last name is ‘Scott’, either as a worker or as a manager of the department that
+-- controls the project
+
 (
     SELECT DISTINCT P.PNo 
     FROM PROJECT P , EMPLOYEE E , WORKS_ON W 
@@ -75,17 +87,30 @@ UNION
 );
 
 --2
-SELECT E.SSN , (E.Salary + (E.Salary * 0.1)) AS NEW_SALARY
+
+-- Show the resulting salaries if every employee working on the ‘IoT’ project is
+-- given a 10 percent raise.
+
+SELECT E.SSN , (E.Salary * 1.1)) AS NEW_SALARY
 FROM EMPLOYEE E  , PROJECT P , WORKS_ON W 
 WHERE P.PName = 'IOT' and E.SSN = W.SSN AND W.PNo = P.PNo;
 
 --3
+
+-- Find the sum of the salaries of all employees of the ‘Accounts’ department, as
+-- well as the maximum salary, the minimum salary, and the average salary in this
+-- department
+
 SELECT  SUM(E.SALARY) , MIN(E.SALARY) , MAX(E.SALARY) , AVG(E.SALARY)
 FROM DEPARTMENT D , EMPLOYEE E
 WHERE D.DName = 'ACCOUNTS' ;
 
 
 --4
+
+-- Retrieve the name of each employee who works on all the projects controlledby
+-- department number 5 (use NOT EXISTS operator).
+
 SELECT E.Name 
 FROM EMPLOYEE E 
 WHERE NOT EXISTS(
@@ -104,6 +129,11 @@ WHERE NOT EXISTS(
 
 --5
 
+-- For each department that has more than five employees, retrieve the department
+-- number and the number of its employees who are making more than Rs.
+-- 6,00,000.
+
+
 SELECT DNo , COUNT(*)
 FROM EMPLOYEE
 WHERE SALARY > 60000  AND DNo IN (
@@ -113,3 +143,4 @@ WHERE SALARY > 60000  AND DNo IN (
     HAVING COUNT(*) > 5
 )
 GROUP BY DNo;
+

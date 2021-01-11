@@ -42,11 +42,16 @@ INSERT INTO ORDERS VALUES (&ord_no, &purchase_amt, '&ord_date', &customer_id, &s
 --queries
 
 --1
+
+-- Count the customers with grades above Bangalore’s average
+
 SELECT COUNT(C.Customer_id)
 FROM CUSTOMER C
 WHERE C.Grade > (SELECT AVG(GRAD) FROM CUSTOMER WHERE CITY ='bangalore');
 
 --2
+
+-- Find the name and numbers of all salesman who had more than one customer
 SELECT S.Name, S.Salesman_id
 FROM Salesman S, CUSTOMER C
 WHERE S.Salesman_id = C.Salesman_id
@@ -54,6 +59,10 @@ GROUP BY S.name, S.salesman_id
 HAVING COUNT (Customer_id) > 1;
 
 --3
+
+-- List all the salesman and indicate those who have and don’t have customers in
+-- their cities (Use UNION operation.)
+
 (SELECT S.Name, S.Salesman_id, C.Customer_name
 FROM Salesman S, Customer C
 WHERE S.Salesman_id = C.Salesman_id and S.city=C.city)
@@ -65,7 +74,12 @@ UNION
 
 --4
 
+
+-- Create a view that finds the salesman who has the customer with the highest order
+-- of a day.
+
 CREATE VIEW MAX_ORD AS
+
 	SELECT S.Salesman_id, S.name, C.Customer_id, C.Customer_name, O.Ord_date, O.Purchase_amt
 	FROM Salesman S, Customer C, Orders O
 	WHERE S.Salesman_id = C.Salesman_id and C.customer_id = S.customer_id;
@@ -74,6 +88,10 @@ SELECT * FROM MAX_ORD M
 WHERE M.Purchase_amt = (SELECT MAX(M1.Purchase_amt) FROM MAX_ORD M1 WHERE M.Ord_date = M1.Ord_date);
 
 --5
+
+-- Demonstrate the DELETE operation by removing salesman with id 1000. All
+-- his orders must also be deleted.
+
 DELETE FROM SALESMAN WHERE Salesman_id = 1;
 
 

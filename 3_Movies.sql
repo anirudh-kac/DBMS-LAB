@@ -1,4 +1,12 @@
 --CREATING TABLES
+
+-- Consider the schema for Movie Database:
+-- ACTOR(Act_id, Act_Name, Act_Gender)
+-- DIRECTOR(Dir_id, Dir_Name, Dir_Phone)
+-- MOVIES(Mov_id, Mov_Title, Mov_Year, Mov_Lang, Dir_id)
+-- MOVIE_CAST(Act_id, Mov_id, Role)
+-- RATING(Mov_id, Rev_Stars)
+
 CREATE TABLE ACTOR(
     Act_id NUMBER(4),
     Act_name VARCHAR(20),
@@ -48,11 +56,17 @@ INSERT INTO RATING VALUES (&Mov_id ,&Rev_stars);
 --queries
 
 --1
+
+-- List the titles of all movies directed by ‘Hitchcock’.
+
 SELECT M.Mov_title , D.Dir_name
 FROM MOVIES M, DIRECTOR D
 WHERE M.Dir_id = D.Dir_id AND D.Dir_name = "Steven";
 
 --2
+
+-- Find the movie names where one or more actors acted in two or more movies
+
 SELECT A.Act_name  , M.Mov_id
 FROM ACTOR A , MOVIE_CAST M
 WHERE M.Act_id = A.Act_id AND  A.Act_id IN (
@@ -62,6 +76,10 @@ WHERE M.Act_id = A.Act_id AND  A.Act_id IN (
 );
 
 --3
+
+-- List all actors who acted in a movie before 2000 and also in a movie after 2015
+-- (use JOIN operation).
+
 (
 SELECT A.Act_name
 FROM ACTOR A JOIN MOVIE_CAST M ON A.Act_id = M.Act_id JOIN MOVIES M1 on M1.Mov_id = M.Mov_id
@@ -76,6 +94,9 @@ WHERE M3.Mov_year >2015
 
 
 --4
+-- Find the title of movies and number of stars for each movie that has at least one
+-- rating and find the highest number of stars that movie received. Sort the result by
+-- movie title.
 
 SELECT M.Mov_title , MAX (R.Rev_stars)
 FROM MOVIES M , RATING R,
@@ -91,6 +112,8 @@ GROUP BY M.Mov_title
 ORDER BY M.Mov_title;
 
 --5
+-- Update rating of all movies directed by ‘Steven Spielberg’ to 5.
+
 UPDATE RATING
 SET Rev_stars = 5
 WHERE Mov_id IN (
@@ -99,7 +122,7 @@ WHERE Mov_id IN (
     WHERE Dir_id IN (
         SELECT Dir_id 
         FROM DIRECTOR
-        WHERE Dir_name  = 'Hitchcock'
+        WHERE Dir_name  = 'Steven Spielberg'
     )
 );
 
